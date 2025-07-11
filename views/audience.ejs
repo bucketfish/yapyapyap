@@ -101,6 +101,14 @@
 
       }
 
+      #end {
+        display: none;
+      }
+
+      #end.show {
+        display: block;
+      }
+
 
     </style>
     <header>
@@ -117,23 +125,21 @@
         <p>start voting for the first slide:</p>
       </div>
 
+      <div id="end">
+        <p>there are no more slides for this presentation!</p>
+        <p>thank you for playing yapyapyap :)</p>
+
+      </div>
+
       <div id="caption-vote-container">
 
       </div>
 
       <div id="img-vote-container">
-        <!-- <div class="img-div">
-          <img src="/images/image10.jpg" alt="">
-          <p class="vote-percentage">20%</p>
 
-        </div>
-
-        <div class="img-div">
-          <img src="/images/image10.jpg" alt="">
-          <p class="vote-percentage">20% (50 votes)</p>
-
-        </div> -->
       </div>
+
+
 
 
       <script src="/socket.io/socket.io.js"></script>

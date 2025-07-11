@@ -33,6 +33,13 @@ socket.on('audienceUpdate', (audience) => {
 
 
 // GAMEPLAY
+
+socket.on('noMoreSlides', () => {
+  document.getElementById('end').classList.add('show')
+  document.getElementById("img-vote-container").innerHTML = ""
+  document.getElementById('caption-vote-container').innerHTML = ""
+})
+
 socket.on('slides', (info) => {
   var slides = info[0]
   var captions = info[1]

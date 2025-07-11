@@ -8,6 +8,8 @@ dotenv.config()
 
 const PORT = process.env.PORT || 3000
 
+const GAME_ROUNDS = 5
+
 
 
 app.set('view engine', 'ejs')
@@ -38,7 +40,7 @@ app.get('/present/:roomId', (req, res) => {
     }
 
     games[roomId].slides = getUnusedRandImgs(roomId)
-    games[roomId].captions = getUnusedRandCaptions(roomId)
+    games[roomId].captions = getUnusedRandCaptions(roomId, games[roomId].votingRound)
 
 
     res.render('present', { roomId })
@@ -139,12 +141,18 @@ io.on('connection', (socket) => {
   socket.on('nextRound', (roomId) => {
     const game = games[roomId]
     if (game) {
+      if (game.votingRound == GAME_ROUNDS) {
+        io.to(roomId).emit("endGame")
+        return
+      }
+
       game.votingRound++;
+
+
 
       var voteData = [game.imgVotes[0].length, game.imgVotes[1].length, game.imgVotes[2].length, game.imgVotes[3].length]
       let maxVote = Math.max(...voteData);
       let maxVoteIndex = voteData.indexOf(maxVote);
-      console.log(maxVoteIndex);
       let winningImg = game.slides[maxVoteIndex];
       if (winningImg == null) winningImg = "/";
 
@@ -154,15 +162,22 @@ io.on('connection', (socket) => {
       let maxVoteCaptionIndex = voteData.indexOf(maxVoteCaption);
       let winningCaption = game.captions[maxVoteCaptionIndex]
 
-      io.to(roomId).emit('showSlide', [winningImg, winningCaption])
+      io.to(roomId).emit('showSlide', [winningImg, winningCaption, game.votingRound, GAME_ROUNDS])
       game.usedImgs.push(winningImg)
       game.usedCaptions.push(winningCaption)
 
-      game.slides = getUnusedRandImgs(roomId)
-      game.captions = getUnusedRandCaptions(roomId)
-      game.imgVotes = [[], [], [], []]
-      game.captionVotes = [[], [], []]
-      io.to(roomId).emit('slides', [game.slides, game.captions, game.votingRound])
+      if (game.votingRound == GAME_ROUNDS) {
+        io.to(roomId).emit("noMoreSlides")
+      }
+      else {
+        game.slides = getUnusedRandImgs(roomId)
+        game.captions = getUnusedRandCaptions(roomId, game.votingRound)
+        game.imgVotes = [[], [], [], []]
+        game.captionVotes = [[], [], []]
+        io.to(roomId).emit('slides', [game.slides, game.captions, game.votingRound])
+      }
+
+
 
     }
   })
@@ -222,15 +237,36 @@ function getUnusedRandImgs(roomId) {
 
 
 const CAPTIONS = [
-  "So...", "This is me.", "The solution...", "Hence", "Since the start", "Therefore", "However...", "On the other hand", "You may not know this:", "Unfortunately", "The reason", "The cause", "The problem", "The root problem", "A new direction", "Our ideal", "The plan", "Why?", "How?", "Who?", "When?", "Fortunately", "The future",
+  "so...", "this is me.", "since the start", "we are here.", "you may not know this:", "unfortunately", "the reason", "the problem", "the root problem", "a new direction", "our ideal", "the plan", "why?", "how?", "who?", "when?", "the future",
 ]
 
-function getUnusedRandCaptions(roomId) {
+const CAPTIONS_NOTFIRST = [
+  "the solution...", "however...", "on the other hand", "the cause", "fortunately", "therefore", "hence"
+]
+
+const CAPTIONS_LAST = [
+  "in a nutshell", "finally", "to conclude", "in summary", "next steps"
+]
+
+var eligibleCaptions = []
+
+function getUnusedRandCaptions(roomId, votingRound) {
+
+  eligibleCaptions = []
+
+  if (votingRound == 0) {
+    eligibleCaptions = CAPTIONS
+  } else if (votingRound == GAME_ROUNDS - 1) {
+    eligibleCaptions = [...CAPTIONS, ...CAPTIONS_NOTFIRST, ...CAPTIONS_LAST]
+  } else {
+    eligibleCaptions = [...CAPTIONS, ...CAPTIONS_NOTFIRST]
+  }
+
   var randInts = []
   while (randInts.length < 3) {
-    let randInt = Math.floor(Math.random() * (CAPTIONS.length));
-    if (!randInts.includes(CAPTIONS[randInt]) && !games[roomId].usedCaptions.includes(CAPTIONS[randInt])) {
-      randInts.push(CAPTIONS[randInt]);
+    let randInt = Math.floor(Math.random() * (eligibleCaptions.length));
+    if (!randInts.includes(eligibleCaptions[randInt]) && !games[roomId].usedCaptions.includes(eligibleCaptions[randInt])) {
+      randInts.push(eligibleCaptions[randInt]);
     }
   }
 
@@ -242,11 +278,10 @@ function getUnusedRandCaptions(roomId) {
 /*
 
 todo next
-- voting for captions ok
-- styling for presenter
+- styling for presenter OK
 - mobile optimisation
-- total 8 slides per game & show that too / slide progress kinda thing
-- reset or create new game
-- load votes when loading page too
+- total 8 slides per game & show that too / slide progress kinda thing OK
+- reset or create new game OK
+- load votes when loading page too OK
 
 */

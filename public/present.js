@@ -5,6 +5,8 @@ let roomId = null
 
 var showInstructions = true
 
+var currentRound = 0
+
 // ROOM STUFF
 function extractRoomId() {
   const path = window.location.pathname
@@ -37,37 +39,24 @@ socket.on('audienceUpdate', (audience) => {
 socket.on('showSlide', (winning) => {
   var winningImg = winning[0]
   var winningCaption = winning[1]
+  var gameRound = winning[2]
+  var totalRounds = winning[3]
+
   const container = document.getElementById('showImg')
   if (!container) return
   container.innerHTML = ''
 
   const img = document.createElement('img')
   img.src = winningImg
-  img.width = 200
   container.appendChild(img)
 
   const caption = document.getElementById('showCaption');
   caption.textContent = winningCaption;
 
-  console.log(winningCaption)
+  const showProgress = document.getElementById('showProgress')
+  showProgress.textContent = "slide " + gameRound + " of 5";
+  currentRound = gameRound;
 
-})
-
-
-socket.on('voteData', (votes) => {
-  const container = document.getElementById('voteResults')
-  if (!container) return
-
-  container.innerHTML = ''
-  votes.forEach((count, i) => {
-    const div = document.createElement('div')
-    div.textContent = `Slide ${i + 1}: ${count} vote(s)`
-    if (yourVote === i) {
-      div.style.fontWeight = 'bold'
-      div.style.color = 'green'
-    }
-    container.appendChild(div)
-  })
 })
 
 
@@ -84,6 +73,12 @@ function nextRound() {
   }
 }
 
+function endGame() {
+  document.getElementById('end').classList.add('show');
+  document.getElementById('show').classList.add('display-none');
+
+}
+
 
 function hideInstructions() {
   const instructions = document.getElementById('instructions');
@@ -93,7 +88,14 @@ function hideInstructions() {
 // CLIENT SIDE
 document.addEventListener('keydown', (event) => {
   if (event.key === 'ArrowRight') {
-    nextRound()
+
+    if (currentRound == 5) {
+      endGame()
+    }
+    else {
+      nextRound()
+    }
+
   }
 });
 

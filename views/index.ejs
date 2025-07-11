@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+  </head>
+  <body>
+    <h1>join a game of yapyapyap</h1>
+    <p>input room code</p>
+    <input type="text" name="roomId-input" id="roomId-input" />
+    <button type="button" name="button" onclick="enterRoom()">enter room!</button>
+
+    <p>or</p>
+    <p>create a room:</p>
+    <input type="text" name="roomId-input-create" id="roomId-input-create" />
+    <button type="button" name="button" onclick="createRoom()">create room!</button>
+
+    <script>
+
+      function enterRoom() {
+        // const roomIdInput = document.getElementById('roomId-input');
+        // console.log(roomIdInput)
+        const roomIdToEnter = document.getElementById('roomId-input').value;
+        console.log(roomIdToEnter)
+        if (roomIdToEnter) {
+          console.log("/audience/" + roomIdToEnter);
+          window.location.href = "/audience/" + roomIdToEnter;
+        }
+      }
+
+      function createRoom() {
+        const roomIdToCreate = document.getElementById('roomId-input-create').value;
+        console.log(roomIdToCreate)
+        if (roomIdToCreate) {
+          window.location.href = "/present/" + roomIdToCreate;
+        }
+      }
+
+
+    </script>
+
+
+  </body>
+</html>

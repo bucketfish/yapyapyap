@@ -22,36 +22,21 @@ socket.on('audienceUpdate', (audience) => {
 })
 
 
-socket.on('slides', (slides) => {
-  console.log("?")
-  const container = document.getElementById('slides')
+socket.on('showSlide', ([winning]) => {
+  var winningImg = winning[0]
+  var winningCaption = winning[1]
+  const container = document.getElementById('showImg')
   if (!container) return
   container.innerHTML = ''
-  slides.forEach((slide, i) => {
-    const wrapper = document.createElement('div')
-    wrapper.className = 'slide'
 
-    const img = document.createElement('img')
-    img.src = `/images/${slide.img}`
-    img.width = 200
-    wrapper.appendChild(img)
+  const img = document.createElement('img')
+  img.src = winningImg
+  img.width = 200
+  container.appendChild(img)
 
-    if (slide.prompt) {
-      const p = document.createElement('p')
-      p.textContent = slide.prompt
-      wrapper.appendChild(p)
-    }
+  const caption = document.getElementById('showCaption');
+  caption.textContent = winningCaption;
 
-    const btn = document.createElement('button')
-    btn.textContent = `Vote for this`
-    btn.onclick = () => {
-      yourVote = i
-      socket.emit('vote', { roomId, index: i })
-    }
-    wrapper.appendChild(btn)
-
-    container.appendChild(wrapper)
-  })
 })
 
 
@@ -81,15 +66,17 @@ window.addEventListener('beforeunload', () => {
 
 });
 
+function nextRound() {
+  console.log("next round")
+  if (roomId) {
+    socket.emit('nextRound', roomId)
+    yourVote = null
+  }
+}
 
 
 document.addEventListener('keydown', (event) => {
   if (event.key === 'ArrowRight') {
-    function nextRound() {
-      if (roomId) {
-        socket.emit('nextRound', roomId)
-        yourVote = null
-      }
-    }
+    nextRound()
   }
 });

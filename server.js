@@ -8,6 +8,8 @@ dotenv.config()
 
 const PORT = process.env.PORT || 3000
 
+
+
 app.set('view engine', 'ejs')
 app.use(express.static('public'))
 
@@ -27,14 +29,24 @@ app.get('/present/:roomId', (req, res) => {
   if (!games[roomId]) {
     const slides = [""] // get random slides later
     games[roomId] = {
-      slides,
-      votes: [0, 0, 0],
+      slides: [],
+      captions: [],
+      imgVotes: [[], [], [], []],
+      captionVotes: [[], [], []],
+      usedImgs: [],
+      usedCaptions: [],
       audience: []
     }
   }
 
   res.render('present', { roomId })
 })
+
+
+const IMAGES = 38 // from 0 to this number inclusive
+
+
+
 
 app.get('/audience/:roomId', (req, res) => {
   const roomId = req.params.roomId
@@ -67,27 +79,47 @@ io.on('connection', (socket) => {
     // if (game) {
       io.to(roomId).emit('audienceUpdate', game.audience)
 
-    //   socket.emit('slides', game.slides)
-    //   socket.emit('voteData', game.votes)
     //
     // }
   })
 
-  socket.on('vote', ({ roomId, index }) => {
+  socket.on('vote', ({ roomId, index, prevvote }) => {
     const game = games[roomId]
-    if (game && game.votes[index] !== undefined) {
-      game.votes[index]++
-      io.to(roomId).emit('voteData', game.votes)
+
+    if (game && game.imgVotes[index] !== undefined) {
+
+      for (var i = 0; i < game.imgVotes.length; i++ ){
+        let index = game.imgVotes[i].indexOf(socket.id)
+        if (index !== -1)  game.imgVotes[i].splice(index, 1);
+      }
+      game.imgVotes[index].push(socket.id);
+
+      var emittedData = [game.imgVotes[0].length, game.imgVotes[1].length, game.imgVotes[2].length, game.imgVotes[3].length, ]
+      io.to(roomId).emit('voteData', emittedData)
     }
   })
 
   socket.on('nextRound', (roomId) => {
     const game = games[roomId]
     if (game) {
-      game.slides = [""]
-      game.votes = [0, 0, 0]
-      io.to(roomId).emit('slides', game.slides)
-      io.to(roomId).emit('voteData', game.votes)
+      let maxVote = Math.max(...game.imgVotes);
+      let maxVoteIndex = game.imgVotes.indexOf(maxVote);
+      let winningImg = game.slides[maxVoteIndex];
+
+      let maxVoteCaption = Math.max(...game.captionVotes);
+      let maxVoteCaptionIndex = game.captionVotes.indexOf(maxVoteCaption);
+      let winningCaption = game.captions[maxVoteCaptionIndex]
+
+      io.to(roomId).emit('showSlide', [winningImg, winningCaption])
+      game.usedImgs.push(winningImg)
+      game.usedCaptions.push(winningCaption)
+
+      game.slides = getUnusedRandImgs(roomId)
+      game.captions = getUnusedRandCaptions(roomId)
+      game.imgVotes = [[], [], [], []]
+      game.captionVotes = [[], [], []]
+      io.to(roomId).emit('slides', [game.slides, game.captions])
+      io.to(roomId).emit('voteData', game.imgVotes)
     }
   })
 
@@ -109,3 +141,34 @@ io.on('connection', (socket) => {
 http.listen(PORT, () => {
   console.log(`listening on http://localhost:${PORT}`)
 })
+
+
+
+function getUnusedRandImgs(roomId) {
+  var randInts = []
+  while (randInts.length < 4) {
+    let randInt = Math.floor(Math.random() * (IMAGES + 1));
+    if (!randInts.includes("/images/image" + randInt + '.jpg') && !games[roomId].usedImgs.includes("/images/image" + randInt + '.jpg')) {
+      randInts.push("/images/image" + randInt + '.jpg');
+    }
+  }
+
+  return randInts;
+}
+
+
+const CAPTIONS = [
+  "So...", "This is me.", "The solution...", "Hence", "Since the start", "Therefore", "However...", "On the other hand", "You may not know this:", "Unfortunately", "The reason", "The cause", "The problem", "The root problem", "A new direction", "Our ideal", "The plan", "Why?", "How?", "Who?", "When?", "Fortunately", "The future",
+]
+
+function getUnusedRandCaptions(roomId) {
+  var randInts = []
+  while (randInts.length < 3) {
+    let randInt = Math.floor(Math.random() * (CAPTIONS.length));
+    if (!randInts.includes(CAPTIONS[randInt]) && !games[roomId].usedCaptions.includes(CAPTIONS[randInt])) {
+      randInts.push(CAPTIONS[randInt]);
+    }
+  }
+
+  return randInts;
+}

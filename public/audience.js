@@ -21,35 +21,60 @@ socket.on('audienceUpdate', (audience) => {
 })
 
 
-socket.on('slides', (slides) => {
-  const container = document.getElementById('slides')
-  if (!container) return
-  container.innerHTML = ''
+socket.on('slides', (info) => {
+  var slides = info[0]
+  var captions = info[1]
+  console.log('recieve slides')
+
+  const imgContainer = document.getElementById('img-vote-container')
+  if (!imgContainer) return
+  imgContainer.innerHTML = ''
+
   slides.forEach((slide, i) => {
     const wrapper = document.createElement('div')
-    wrapper.className = 'slide'
+    wrapper.classList.add('img-div')
+    wrapper.id = "img-div-" + i
 
     const img = document.createElement('img')
-    img.src = `/images/${slide.img}`
-    img.width = 200
+    img.src = slide
     wrapper.appendChild(img)
 
-    if (slide.prompt) {
-      const p = document.createElement('p')
-      p.textContent = slide.prompt
-      wrapper.appendChild(p)
-    }
 
-    const btn = document.createElement('button')
-    btn.textContent = `Vote for this`
-    btn.onclick = () => {
+    const votePercent = document.createElement('p')
+    votePercent.classList.add('vote-percentage')
+    votePercent.id = 'vote-percent-' + i
+    votePercent.textContent = "0% (0 votes)"
+
+    wrapper.appendChild(votePercent)
+
+    wrapper.onclick = () => {
       yourVote = i
-      socket.emit('vote', { roomId, index: i })
-    }
-    wrapper.appendChild(btn)
+      socket.emit('vote', {roomId, index: i})
 
-    container.appendChild(wrapper)
+      const divs = document.getElementsByClassName('img-div');
+
+      for (var j = 0; j < divs.length; j++) {
+        const div = divs[j]
+        div.classList.remove('selected')
+
+      }
+      // divs.forEach((div, j) => {
+
+      const votedFor = document.getElementById('img-div-' + i)
+      votedFor.classList.add('selected')
+
+    }
+
+    imgContainer.appendChild(wrapper)
+
   })
+
+
+  // captions.forEach((caption, i) => {
+  //   const p = document.createElement('p');
+  //   p.textContent = caption
+  //   container.appendChild(p);
+  // })
 })
 
 
@@ -60,13 +85,15 @@ socket.on('voteData', (votes) => {
 
   container.innerHTML = ''
   votes.forEach((count, i) => {
-    const div = document.createElement('div')
-    div.textContent = `Slide ${i + 1}: ${count} vote(s)`
-    if (yourVote === i) {
-      div.style.fontWeight = 'bold'
-      div.style.color = 'green'
-    }
-    container.appendChild(div)
+    const div = document.getElementById('vote-percent-' + i)
+    div.textContent = count + " votes"
+    // const div = document.createElement('div')
+    // div.textContent = `Slide ${i + 1}: ${count} vote(s)`
+    // if (yourVote === i) {
+    //   div.style.fontWeight = 'bold'
+    //   div.style.color = 'green'
+    // }
+    // container.appendChild(div)
   })
 })
 

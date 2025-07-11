@@ -16,13 +16,13 @@ if (roomId) {
 }
 
 socket.on('audienceUpdate', (audience) => {
-  var audienceCount = audience.length -1;
+  var audienceCount = Math.max(audience.length -1, 0);
   document.getElementById('audience-count').textContent = audienceCount;
   console.log(audienceCount);
 })
 
 
-socket.on('showSlide', ([winning]) => {
+socket.on('showSlide', (winning) => {
   var winningImg = winning[0]
   var winningCaption = winning[1]
   const container = document.getElementById('showImg')
@@ -61,7 +61,7 @@ socket.on('voteData', (votes) => {
 
 window.addEventListener('beforeunload', () => {
   if (roomId) {
-    socket.emit('leaveRoom', roomId);
+    socket.emit('leaveRoom', { roomId, isHost: true });
   }
 
 });

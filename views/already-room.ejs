@@ -37,26 +37,14 @@
 
     <header>
       <p>yapyapyap · yyy.tongyu.dev</p>
-      <p>room code: <em><%= roomId %></em></p>
+      <p></p>
     </header>
 
     <main>
+      <p>a room with code <em><%= roomId %></em> already exists!</p>
+      <p>did you mean to <a href="/audience/<%= roomId %>">join as audience instead?</a></p>
+      <p>or, <a href="/">go back and create another room.</a></p>
 
-          <p>there are <span id="audience-count">0</span> audience members in this room</p>
-
-          <div id="instructions">
-            <p>presenter doesn't know what's happening</p>
-            <p>audience members can live vote for the next slide.</p>
-            <p>audience can begin voting now !!!</p>
-
-            <button type="button" name="button" onclick="nextRound()">ready to begin?</button>
-
-          </div>
-
-          <div id="show">
-            <div id="showImg""></div>
-            <div id="showCaption"></div>
-          </div>
     </main>
 
 

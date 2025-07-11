@@ -1,8 +1,33 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
   <head>
+
     <meta charset="utf-8">
-    <title></title>
+    <link rel="stylesheet" href="/style.css">
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/png" href="/assets/favicon.png">
+
+    <title>audience · yapyapyap</title>
+
+    <meta name="description" content="yapyapyap: a bullshitting game, with audience pressure!">
+
+    <meta property="og:url" content="https://yyy.tongyu.dev">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="yapyapyap">
+    <meta property="og:description" content="join room <%= roomId %> on yapyapyap">
+    <!-- <meta property="og:image" content="/assets/ogimg.png"> -->
+    <meta property="og:site_name" content="tongyu">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta property="twitter:domain" content="yyy.tongyu.dev">
+    <meta property="twitter:url" content="https://yyy.tongyu.dev">
+    <meta name="twitter:title" content="yapyapyap">
+    <meta name="twitter:description" contents="join room <%= roomId %> on yapyapyap">
+    <!-- <meta name="twitter:image" content="/assets/ogimg.png"> -->
+
+    <meta name="theme-color" content="#FCCAB3">
   </head>
   <body>
     <style>
@@ -49,35 +74,42 @@
 
 
     </style>
-    <p>you are in room <span id="roomId"><%= roomId %></span></p>
+    <header>
+      <p>yapyapyap · yyy.tongyu.dev</p>
+      <p>you are in: <span id="roomId"><%= roomId %></span></p>
+    </header>
 
-    <div id="instructions">
-      <p>waiting for host to start game...</p>
-      <p>the presenter does NOT know what slide is coming next.</p>
-      <p>they will have to create a cohesive presentation from whatever you choose as the audience.</p>
-      <p>start voting for the first slide:</p>
-    </div>
 
-    <div id="slides"></div>
-
-    <div id="img-vote-container">
-      <!-- <div class="img-div">
-        <img src="/images/image10.jpg" alt="">
-        <p class="vote-percentage">20%</p>
-
+    <main>
+      <div id="instructions">
+        <p>waiting for host to start game...</p>
+        <p>the presenter does NOT know what slide is coming next.</p>
+        <p>they will have to create a cohesive presentation from whatever you choose as the audience.</p>
+        <p>start voting for the first slide:</p>
       </div>
 
-      <div class="img-div">
-        <img src="/images/image10.jpg" alt="">
-        <p class="vote-percentage">20% (50 votes)</p>
+      <div id="slides"></div>
 
-      </div> -->
-    </div>
+      <div id="img-vote-container">
+        <!-- <div class="img-div">
+          <img src="/images/image10.jpg" alt="">
+          <p class="vote-percentage">20%</p>
+
+        </div>
+
+        <div class="img-div">
+          <img src="/images/image10.jpg" alt="">
+          <p class="vote-percentage">20% (50 votes)</p>
+
+        </div> -->
+      </div>
 
 
-    <div id="voteResults"></div>
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="/audience.js"></script>
+      <div id="voteResults"></div>
+      <script src="/socket.io/socket.io.js"></script>
+      <script src="/audience.js"></script>
+    </main>
+
 
   </body>
 </html>

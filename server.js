@@ -37,9 +37,16 @@ app.get('/present/:roomId', (req, res) => {
       usedCaptions: [],
       audience: []
     }
+
+    res.render('present', { roomId })
   }
 
-  res.render('present', { roomId })
+
+  else {
+    res.render('already-room', { roomId })
+  }
+
+
 })
 
 
@@ -79,6 +86,12 @@ io.on('connection', (socket) => {
     // if (game) {
       io.to(roomId).emit('audienceUpdate', game.audience)
 
+      io.to(roomId).emit('slides', [game.slides, game.captions])
+
+      var emittedData = [game.imgVotes[0].length, game.imgVotes[1].length, game.imgVotes[2].length, game.imgVotes[3].length, ]
+
+      io.to(roomId).emit('voteData', emittedData)
+
     //
     // }
   })
@@ -102,9 +115,12 @@ io.on('connection', (socket) => {
   socket.on('nextRound', (roomId) => {
     const game = games[roomId]
     if (game) {
-      let maxVote = Math.max(...game.imgVotes);
-      let maxVoteIndex = game.imgVotes.indexOf(maxVote);
+      var voteData = [game.imgVotes[0].length, game.imgVotes[1].length, game.imgVotes[2].length, game.imgVotes[3].length]
+      let maxVote = Math.max(...voteData);
+      let maxVoteIndex = voteData.indexOf(maxVote);
+      console.log(maxVoteIndex);
       let winningImg = game.slides[maxVoteIndex];
+      if (winningImg == null) winningImg = "/";
 
       let maxVoteCaption = Math.max(...game.captionVotes);
       let maxVoteCaptionIndex = game.captionVotes.indexOf(maxVoteCaption);
@@ -119,17 +135,26 @@ io.on('connection', (socket) => {
       game.imgVotes = [[], [], [], []]
       game.captionVotes = [[], [], []]
       io.to(roomId).emit('slides', [game.slides, game.captions])
-      io.to(roomId).emit('voteData', game.imgVotes)
     }
   })
 
-  socket.on('leaveRoom', (roomId) => {
+  socket.on('leaveRoom', ({ roomId, isHost }) => {
     const game = games[roomId]
     if (game) {
       let index = game.audience.indexOf(socket.id)
       if (index !== -1) game.audience.splice(index, 1);
       console.log(`${socket.id} left ${roomId}`)
+
+      io.to(roomId).emit('audienceUpdate', game.audience)
     }
+
+    console.log(isHost)
+    if (game && isHost) {
+      console.log("deleting room")
+      io.to(roomId).emit('roomDeleted');
+      delete games[roomId];
+    }
+
   })
 
   socket.on('disconnect', () => {
@@ -141,6 +166,7 @@ io.on('connection', (socket) => {
 http.listen(PORT, () => {
   console.log(`listening on http://localhost:${PORT}`)
 })
+
 
 
 

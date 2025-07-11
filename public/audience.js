@@ -43,7 +43,7 @@ socket.on('slides', (info) => {
     const votePercent = document.createElement('p')
     votePercent.classList.add('vote-percentage')
     votePercent.id = 'vote-percent-' + i
-    votePercent.textContent = "0% (0 votes)"
+    votePercent.textContent = "0 votes"
 
     wrapper.appendChild(votePercent)
 
@@ -86,7 +86,9 @@ socket.on('voteData', (votes) => {
   container.innerHTML = ''
   votes.forEach((count, i) => {
     const div = document.getElementById('vote-percent-' + i)
-    div.textContent = count + " votes"
+    if (count) div.textContent = count + " votes";
+    else div.textContent = "0 votes";
+
     // const div = document.createElement('div')
     // div.textContent = `Slide ${i + 1}: ${count} vote(s)`
     // if (yourVote === i) {
@@ -101,7 +103,7 @@ socket.on('voteData', (votes) => {
 
 window.addEventListener('beforeunload', () => {
   if (roomId) {
-    socket.emit('leaveRoom', roomId);
+    socket.emit('leaveRoom', { roomId, isHost: false });
   }
 
 });

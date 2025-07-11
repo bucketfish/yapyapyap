@@ -1,20 +1,71 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
-  <head>
-    <meta charset="utf-8">
-    <title></title>
-  </head>
-  <body>
-    <h1>join a game of yapyapyap</h1>
-    <p>input room code</p>
-    <input type="text" name="roomId-input" id="roomId-input" />
-    <button type="button" name="button" onclick="enterRoom()">enter room!</button>
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="/style.css">
 
-    <p>or</p>
-    <p>create a room:</p>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/png" href="/assets/favicon.png">
+
+  <title>yapyapyap</title>
+
+  <meta name="description" content="yapyapyap: a bullshitting game, with audience pressure!">
+
+  <meta property="og:url" content="https://yyy.tongyu.dev">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="yapyapyap">
+  <meta property="og:description" content="yapyapyap: a bullshitting game, with audience pressure!">
+  <!-- <meta property="og:image" content="/assets/ogimg.png"> -->
+  <meta property="og:site_name" content="tongyu">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta property="twitter:domain" content="yyy.tongyu.dev">
+  <meta property="twitter:url" content="https://yyy.tongyu.dev">
+  <meta name="twitter:title" content="yapyapyap">
+  <meta name="twitter:description" contents="yapyapyap: a bullshitting game, with audience pressure!">
+  <!-- <meta name="twitter:image" content="/assets/ogimg.png"> -->
+
+  <meta name="theme-color" content="#FCCAB3">
+
+</head>
+
+  <body>
+    <style>
+      main {
+        display: flex;
+        flex-flow: column;
+        align-items: center;
+      }
+      #maintitle {
+        font-size: 6em;
+        text-align: center;
+      }
+
+      #joingame {
+        background-color: var(--orange);
+        padding: 40px;
+        border-radius: 10px;
+      }
+    </style>
+
+
+    <main>
+      <h1 id="maintitle">yapyapyap!</h1>
+
+
+    <div id="joingame">
+      <p>join a game via room code:</p>
+      <input type="text" name="roomId-input" id="roomId-input" />
+      <button type="button" name="button" onclick="enterRoom()">enter room!</button>
+    </div>
+
+
+    <p>or create a room:</p>
     <input type="text" name="roomId-input-create" id="roomId-input-create" />
     <button type="button" name="button" onclick="createRoom()">create room!</button>
 
+  </main>
     <script>
 
       function enterRoom() {

@@ -1,0 +1,38 @@
+:root {
+  --red: #E89ACB;
+  --orange: #FCCAB3;
+  --green: #B6E3AE;
+  --blue: #A1B8E9;
+  --black: #535260;
+  --white: #FCF9F9;
+}
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  background-color: var(--white);
+  color: var(--black);
+  font-family: Roboto, sans-serif;
+}
+
+header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  padding: 5px 20px;
+  box-sizing: border-box;
+  background-color: var(--orange);
+  font-weight: bold;
+}
+
+main {
+  padding: 20px;
+}
+
+em {
+  font-style: normal;
+  text-decoration: underline;
+  text-decoration-style: wavy;
+}

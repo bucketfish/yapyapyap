@@ -4,6 +4,7 @@ let yourVote = null
 let roomId = null
 
 
+// ROOM STUFF
 function extractRoomId() {
   const path = window.location.pathname
   return path.split('/').pop()
@@ -15,6 +16,10 @@ if (roomId) {
   socket.emit('joinRoom', roomId)
 }
 
+
+
+
+// INFORMATION
 socket.on('audienceUpdate', (audience) => {
   var audienceCount = Math.max(audience.length -1, 0);
   document.getElementById('audience-count').textContent = audienceCount;
@@ -22,6 +27,10 @@ socket.on('audienceUpdate', (audience) => {
 })
 
 
+
+
+
+// GAMEPLAY
 socket.on('showSlide', (winning) => {
   var winningImg = winning[0]
   var winningCaption = winning[1]
@@ -58,14 +67,6 @@ socket.on('voteData', (votes) => {
 
 
 
-
-window.addEventListener('beforeunload', () => {
-  if (roomId) {
-    socket.emit('leaveRoom', { roomId, isHost: true });
-  }
-
-});
-
 function nextRound() {
   console.log("next round")
   if (roomId) {
@@ -75,8 +76,18 @@ function nextRound() {
 }
 
 
+
+// CLIENT SIDE
 document.addEventListener('keydown', (event) => {
   if (event.key === 'ArrowRight') {
     nextRound()
   }
+});
+
+// LEAVING
+window.addEventListener('beforeunload', () => {
+  if (roomId) {
+    socket.emit('leaveRoom', { roomId, isHost: true });
+  }
+
 });

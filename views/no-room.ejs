@@ -2,12 +2,51 @@
 <html lang="en" dir="ltr">
   <head>
     <meta charset="utf-8">
-    <title></title>
+    <link rel="stylesheet" href="/style.css">
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/png" href="/assets/favicon.png">
+
+    <title>present · yapyapyap</title>
+
+    <meta name="description" content="yapyapyap: a bullshitting game, with audience pressure!">
+
+    <meta property="og:url" content="https://yyy.tongyu.dev">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="yapyapyap">
+    <meta property="og:description" content="yapyapyap: a bullshitting game, with audience pressure!">
+    <!-- <meta property="og:image" content="/assets/ogimg.png"> -->
+    <meta property="og:site_name" content="tongyu">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta property="twitter:domain" content="yyy.tongyu.dev">
+    <meta property="twitter:url" content="https://yyy.tongyu.dev">
+    <meta name="twitter:title" content="yapyapyap">
+    <meta name="twitter:description" contents="yapyapyap: a bullshitting game, with audience pressure!">
+    <!-- <meta name="twitter:image" content="/assets/ogimg.png"> -->
+
+    <meta name="theme-color" content="#FCCAB3">
+
   </head>
   <body>
 
-    <p>there's no room here.</p>
-    <p>maybe try creating a room?</p>
+    <style>
+
+    </style>
+
+    <header>
+      <p>yapyapyap · yyy.tongyu.dev</p>
+      <p></p>
+    </header>
+
+    <main>
+      <p>there's no room with code <em><%= roomId %></em>!</p>
+      <p>maybe <a href="/">go back and try joining another room?</a></p>
+      <p>or, <a href="/present/<%= roomId %>">create a room with this code</a></p>
+
+
+    </main>
 
   </body>
 </html>

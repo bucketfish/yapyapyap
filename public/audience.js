@@ -4,6 +4,7 @@ let yourVote = null
 let roomId = null
 
 
+// ROOM CONNECTION
 function extractRoomId() {
   const path = window.location.pathname
   return path.split('/').pop()
@@ -21,6 +22,10 @@ socket.on('audienceUpdate', (audience) => {
 })
 
 
+
+
+
+// GAMEPLAY
 socket.on('slides', (info) => {
   var slides = info[0]
   var captions = info[1]
@@ -58,7 +63,6 @@ socket.on('slides', (info) => {
         div.classList.remove('selected')
 
       }
-      // divs.forEach((div, j) => {
 
       const votedFor = document.getElementById('img-div-' + i)
       votedFor.classList.add('selected')
@@ -101,6 +105,8 @@ socket.on('voteData', (votes) => {
 
 
 
+
+// LEAVING
 window.addEventListener('beforeunload', () => {
   if (roomId) {
     socket.emit('leaveRoom', { roomId, isHost: false });

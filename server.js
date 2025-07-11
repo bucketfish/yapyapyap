@@ -22,12 +22,10 @@ app.get('/', (req, res) => {
   res.render('index')
 })
 
-// serve present view (creates new room if needed)
 app.get('/present/:roomId', (req, res) => {
   const roomId = req.params.roomId
 
   if (!games[roomId]) {
-    const slides = [""] // get random slides later
     games[roomId] = {
       slides: [],
       captions: [],
@@ -59,7 +57,7 @@ app.get('/audience/:roomId', (req, res) => {
   const roomId = req.params.roomId
 
   if (!games[roomId]) {
-    res.render('no-room');
+    res.render('no-room', { roomId });
   }
   else {
     res.render('audience', { roomId });

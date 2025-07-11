@@ -237,11 +237,11 @@ function getUnusedRandImgs(roomId) {
 
 
 const CAPTIONS = [
-  "so...", "this is me.", "since the start", "we are here.", "you may not know this:", "unfortunately", "the reason", "the problem", "the root problem", "a new direction", "our ideal", "the plan", "why?", "how?", "who?", "when?", "the future",
+  "so...", "this is me.", "the start", "you", "you may not know this:", "unfortunately", "the reason", "the problem", "a new direction", "the idea", "the plan", "why?", "how?", "when?", "the future", "as you can see", "now", "before", "fun fact"
 ]
 
 const CAPTIONS_NOTFIRST = [
-  "the solution...", "however...", "on the other hand", "the cause", "fortunately", "therefore", "hence"
+  "the solution...", "however...", "on the other hand", "the cause", "fortunately", "therefore", "hence", "but", "also"
 ]
 
 const CAPTIONS_LAST = [

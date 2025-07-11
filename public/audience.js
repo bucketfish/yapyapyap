@@ -45,6 +45,10 @@ socket.on('slides', (info) => {
   var captions = info[1]
   var recievedVotingRound = info[2]
 
+  if (recievedVotingRound > 0) {
+    document.getElementById('instructions').classList.add('display-none');
+  }
+
   if (recievedVotingRound != votingRound) {
     votingRound = recievedVotingRound
   }

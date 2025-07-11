@@ -33,8 +33,13 @@ app.get('/present/:roomId', (req, res) => {
       captionVotes: [[], [], []],
       usedImgs: [],
       usedCaptions: [],
-      audience: []
+      audience: [],
+      votingRound: 0
     }
+
+    games[roomId].slides = getUnusedRandImgs(roomId)
+    games[roomId].captions = getUnusedRandCaptions(roomId)
+
 
     res.render('present', { roomId })
   }
@@ -60,6 +65,7 @@ app.get('/audience/:roomId', (req, res) => {
     res.render('no-room', { roomId });
   }
   else {
+
     res.render('audience', { roomId });
   }
 
@@ -82,19 +88,21 @@ io.on('connection', (socket) => {
 
 
     // if (game) {
-      io.to(roomId).emit('audienceUpdate', game.audience)
+    io.to(roomId).emit('audienceUpdate', game.audience)
 
-      io.to(roomId).emit('slides', [game.slides, game.captions])
+    io.to(roomId).emit('slides', [game.slides, game.captions, game.votingRound])
 
-      var emittedData = [game.imgVotes[0].length, game.imgVotes[1].length, game.imgVotes[2].length, game.imgVotes[3].length, ]
+    var emittedData = [game.imgVotes[0].length, game.imgVotes[1].length, game.imgVotes[2].length, game.imgVotes[3].length, ]
+    io.to(roomId).emit('voteDataImg', emittedData)
 
-      io.to(roomId).emit('voteData', emittedData)
+    var emittedData = [game.captionVotes[0].length, game.captionVotes[1].length, game.captionVotes[2].length ]
+    io.to(roomId).emit('voteDataCaption', emittedData)
 
     //
     // }
   })
 
-  socket.on('vote', ({ roomId, index, prevvote }) => {
+  socket.on('voteImg', ({ roomId, index }) => {
     const game = games[roomId]
 
     if (game && game.imgVotes[index] !== undefined) {
@@ -106,13 +114,33 @@ io.on('connection', (socket) => {
       game.imgVotes[index].push(socket.id);
 
       var emittedData = [game.imgVotes[0].length, game.imgVotes[1].length, game.imgVotes[2].length, game.imgVotes[3].length, ]
-      io.to(roomId).emit('voteData', emittedData)
+      io.to(roomId).emit('voteDataImg', emittedData)
     }
   })
+
+
+  socket.on('voteCaption', ({ roomId, index }) => {
+    const game = games[roomId]
+
+    if (game && game.captionVotes[index] !== undefined) {
+
+      for (var i = 0; i < game.captionVotes.length; i++ ){
+        let index = game.captionVotes[i].indexOf(socket.id)
+        if (index !== -1)  game.captionVotes[i].splice(index, 1);
+      }
+      game.captionVotes[index].push(socket.id);
+
+      var emittedData = [game.captionVotes[0].length, game.captionVotes[1].length, game.captionVotes[2].length ]
+      io.to(roomId).emit('voteDataCaption', emittedData)
+    }
+  })
+
 
   socket.on('nextRound', (roomId) => {
     const game = games[roomId]
     if (game) {
+      game.votingRound++;
+
       var voteData = [game.imgVotes[0].length, game.imgVotes[1].length, game.imgVotes[2].length, game.imgVotes[3].length]
       let maxVote = Math.max(...voteData);
       let maxVoteIndex = voteData.indexOf(maxVote);
@@ -120,8 +148,10 @@ io.on('connection', (socket) => {
       let winningImg = game.slides[maxVoteIndex];
       if (winningImg == null) winningImg = "/";
 
-      let maxVoteCaption = Math.max(...game.captionVotes);
-      let maxVoteCaptionIndex = game.captionVotes.indexOf(maxVoteCaption);
+      voteData = [game.captionVotes[0].length, game.captionVotes[1].length, game.captionVotes[2].length ]
+
+      let maxVoteCaption = Math.max(...voteData);
+      let maxVoteCaptionIndex = voteData.indexOf(maxVoteCaption);
       let winningCaption = game.captions[maxVoteCaptionIndex]
 
       io.to(roomId).emit('showSlide', [winningImg, winningCaption])
@@ -132,13 +162,24 @@ io.on('connection', (socket) => {
       game.captions = getUnusedRandCaptions(roomId)
       game.imgVotes = [[], [], [], []]
       game.captionVotes = [[], [], []]
-      io.to(roomId).emit('slides', [game.slides, game.captions])
+      io.to(roomId).emit('slides', [game.slides, game.captions, game.votingRound])
+
     }
   })
 
   socket.on('leaveRoom', ({ roomId, isHost }) => {
     const game = games[roomId]
     if (game) {
+      for (var i = 0; i < game.imgVotes.length; i++ ){
+        let index = game.imgVotes[i].indexOf(socket.id)
+        if (index !== -1)  game.imgVotes[i].splice(index, 1);
+      }
+
+      for (var i = 0; i < game.captionVotes.length; i++ ){
+        let index = game.captionVotes[i].indexOf(socket.id)
+        if (index !== -1)  game.captionVotes[i].splice(index, 1);
+      }
+
       let index = game.audience.indexOf(socket.id)
       if (index !== -1) game.audience.splice(index, 1);
       console.log(`${socket.id} left ${roomId}`)
@@ -146,7 +187,6 @@ io.on('connection', (socket) => {
       io.to(roomId).emit('audienceUpdate', game.audience)
     }
 
-    console.log(isHost)
     if (game && isHost) {
       console.log("deleting room")
       io.to(roomId).emit('roomDeleted');
@@ -196,3 +236,17 @@ function getUnusedRandCaptions(roomId) {
 
   return randInts;
 }
+
+
+
+/*
+
+todo next
+- voting for captions ok
+- styling for presenter
+- mobile optimisation
+- total 8 slides per game & show that too / slide progress kinda thing
+- reset or create new game
+- load votes when loading page too
+
+*/

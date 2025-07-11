@@ -31,44 +31,73 @@
   </head>
   <body>
     <style>
+
+      #caption-vote-container {
+        display: flex;
+        flex-flow: row wrap;
+        width: 80%;
+        justify-content: space-between;
+        margin: 0 auto;
+        margin-bottom: 20px;
+      }
+
+      #caption-vote-container .caption-div {
+        width: 32%;
+        border: 2px solid var(--black);
+        border-radius: 10px;
+        box-sizing: border-box;
+        padding: 15px 20px;
+        text-align: center;
+      }
+
+      #caption-vote-container .caption-div.selected {
+        border-color: var(--green);
+        background-color: var(--green);
+      }
+
+      #caption-vote-container .caption-div p {
+        margin: 0;
+        margin-top: 5px;
+      }
+
       #img-vote-container {
           display: flex;
           flex-flow: row wrap;
-          width: 100%;
-          gap: 5%;
-          justify-content: center;
+          width: 80%;
+          justify-content: space-between;
+          margin: 0 auto;
 
       }
 
-
       #img-vote-container .img-div {
-        width: 35%;
-        border: 2px solid black;
+        width: 24%;
+        border: 2px solid var(--black);
         border-radius: 10px;
         box-sizing: border-box;
-        padding: 10px;
-
-        position: relative;
+        padding: 0;
 
         display: flex;
-        justify-content: center;
+        justify-content: top;
         flex-flow: column;
       }
 
       #img-vote-container .img-div.selected {
-        border-color: red;
+        border-color: var(--green);
+        background-color: var(--green);
       }
 
 
       #img-vote-container .img-div img {
         width: 100%;
+        border-radius: 8px 8px 0 0;
+        margin: 0;
       }
 
       #img-vote-container .vote-percentage {
-        /* position: absolute; */
-        /* bottom: 10px; */
+
         text-align: center;
         margin-bottom: 0;
+        padding-bottom: 10px;
 
       }
 
@@ -76,7 +105,7 @@
     </style>
     <header>
       <p>yapyapyap · yyy.tongyu.dev</p>
-      <p>you are in: <span id="roomId"><%= roomId %></span></p>
+      <p>room code: <em><%= roomId %></em></p>
     </header>
 
 
@@ -88,7 +117,9 @@
         <p>start voting for the first slide:</p>
       </div>
 
-      <div id="slides"></div>
+      <div id="caption-vote-container">
+
+      </div>
 
       <div id="img-vote-container">
         <!-- <div class="img-div">
@@ -105,7 +136,6 @@
       </div>
 
 
-      <div id="voteResults"></div>
       <script src="/socket.io/socket.io.js"></script>
       <script src="/audience.js"></script>
     </main>

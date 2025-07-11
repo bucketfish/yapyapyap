@@ -46,6 +46,11 @@
         background-color: var(--orange);
         padding: 40px;
         border-radius: 10px;
+        margin-bottom: 25px;
+      }
+
+      #joingame p {
+        margin-top: 0;
       }
     </style>
 
@@ -61,9 +66,12 @@
     </div>
 
 
-    <p>or create a room:</p>
-    <input type="text" name="roomId-input-create" id="roomId-input-create" />
-    <button type="button" name="button" onclick="createRoom()">create room!</button>
+    <div id="creategame">
+      <p>or create a room:</p>
+      <input type="text" name="roomId-input-create" id="roomId-input-create" />
+      <button type="button" name="button" onclick="createRoom()">create room!</button>
+    </div>
+
 
   </main>
     <script>

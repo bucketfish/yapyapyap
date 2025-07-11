@@ -3,6 +3,7 @@ const socket = io()
 let yourVote = null
 let roomId = null
 
+var showInstructions = true
 
 // ROOM STUFF
 function extractRoomId() {
@@ -22,8 +23,10 @@ if (roomId) {
 // INFORMATION
 socket.on('audienceUpdate', (audience) => {
   var audienceCount = Math.max(audience.length -1, 0);
-  document.getElementById('audience-count').textContent = audienceCount;
-  console.log(audienceCount);
+  var counts = document.getElementsByClassName('audience-count');
+  for (var i = 0; i < counts.length; i++) {
+    counts[i].textContent = audienceCount;
+  }
 })
 
 
@@ -45,6 +48,8 @@ socket.on('showSlide', (winning) => {
 
   const caption = document.getElementById('showCaption');
   caption.textContent = winningCaption;
+
+  console.log(winningCaption)
 
 })
 
@@ -69,6 +74,10 @@ socket.on('voteData', (votes) => {
 
 function nextRound() {
   console.log("next round")
+  if (showInstructions) {
+    showInstructions = false
+    hideInstructions()
+  }
   if (roomId) {
     socket.emit('nextRound', roomId)
     yourVote = null
@@ -76,6 +85,10 @@ function nextRound() {
 }
 
 
+function hideInstructions() {
+  const instructions = document.getElementById('instructions');
+  instructions.classList.add("display-none")
+}
 
 // CLIENT SIDE
 document.addEventListener('keydown', (event) => {

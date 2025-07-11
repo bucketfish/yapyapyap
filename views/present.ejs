@@ -32,19 +32,21 @@
   <body>
 
     <style>
+      .display-none {
+        display: none;
+      }
 
     </style>
 
     <header>
       <p>yapyapyap · yyy.tongyu.dev</p>
-      <p>room code: <em><%= roomId %></em></p>
+      <p>room code: <em><%= roomId %></em> · <span class="audience-count">0</span> audience</p>
     </header>
 
     <main>
-
-          <p>there are <span id="audience-count">0</span> audience members in this room</p>
-
           <div id="instructions">
+            <p>there are <span class="audience-count">0</span> audience members in this room</p>
+
             <p>presenter doesn't know what's happening</p>
             <p>audience members can live vote for the next slide.</p>
             <p>audience can begin voting now !!!</p>
@@ -54,8 +56,9 @@
           </div>
 
           <div id="show">
-            <div id="showImg""></div>
             <div id="showCaption"></div>
+            <div id="showImg""></div>
+
           </div>
     </main>
 
